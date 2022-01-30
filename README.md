@@ -2,6 +2,32 @@
 
 ## 노마드 코더 인강 따라하기
 
+## 주의할점
+
+- service 와 repo 를 나누면 순환참조 할 일이 없다. typeorm repo custom 방법 https://docs.nestjs.com/techniques/database#custom-repository
+- 순환참조 할 경우 doc 참고 할 것 https://docs.nestjs.com/fundamentals/circular-dependency
+- dynamic module 로 사용하면 Global()로 모듈을 설정하지 않는 이상 다른 모듈에서 임포트 받을때 프로바이더 까지 설정 해줘야 하는 번거로움이 있다
+
+- 여기서 다이나믹 모듈의 프로바이더가 다이나믹 모듈에 들어온 인자를 주입받으면 그 프로바이더를 다른 모듈에서 사용하는데 더 어려움이 생긴다.(그냥 사용 안되고 오류가 뜸... )
+
+- 그러므로 커스텀 프로바이더를 다이나믹 모듈과 꼭 같이 사용 해야 겠다면 그냥 @Global()로 만든후 다른 모듈에서 사용하던가
+
+- 다이나믹 말고 커스텀 프로바이더만 사용하면서 사용해야 할 인자 같은게 있다면 별도 파일에서 상수로 만든후에 가져오는게 더 낫다.
+
+- @Module 모듈 데코레이터 안에서 exports 를 해주고 있으면 import 받는 곳에서 사용할 provider 를 providers 에 다시 안 넣어줘도 됨. imports 에 모듈만 넣어주면 알아서 처리됨.
+
+- dynamicModule 에서 exports 된 provider는 import 받는 곳에서 imports 에 모듈 넣어주고, providers 에 provider 까지 넣어줘야 의존성 주입이 됨.
+
+- DynamicModule 을 사용하던 @Module 데코레이터를 사용하던지 어쨋든 간에 export 하는 곳에서 @Global() 하면 import 받는 곳에서 임포트도 필요없고 프로바이더에 뭘 넣어줄 필요도 없음. 단 자주 사용하는 것만(config 같은것) 하는것이 좋다고 함.(구글링)
+
+- entities 경로는 dist 폴더도 검색한다.(js 를 포함해야 하며, 엔티티 삭제나 모듈 삭제후 dist 도 함께 지워야 안전하다.)
+
+```
+entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
+```
+
+- 최대한 기능은 잘게 종류별로 모듈로 쪼개서 서비스에 넣고 재활용 해야 한다.
+
 ## gql
 
 - codeFirst : 스키마 파일이 메모리에 저장된다.(별도로 작성 안해도 된다.)

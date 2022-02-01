@@ -1,3 +1,5 @@
+import { UserRepo } from './../users/repository/user.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CONFIG_OPTION } from './interface/jwt.constants';
 import { DynamicModule, Module, Global } from '@nestjs/common';
 import { JwtModuleOptions } from './interface/jwt.interface';

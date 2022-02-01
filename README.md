@@ -4,6 +4,7 @@
 
 ## 주의할점
 
+- map type 을 할때 ArgsTypes안에 들어가는 타입은 inputType 이 되야 함(object 일 경우에만)
 - service 와 repo 를 나누면 순환참조 할 일이 없다. typeorm repo custom 방법 https://docs.nestjs.com/techniques/database#custom-repository
 - 순환참조 할 경우 doc 참고 할 것 https://docs.nestjs.com/fundamentals/circular-dependency
 - dynamic module 로 사용하면 Global()로 모듈을 설정하지 않는 이상 다른 모듈에서 임포트 받을때 프로바이더 까지 설정 해줘야 하는 번거로움이 있다
@@ -44,7 +45,7 @@ entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
 Query(typeFunc: ReturnTypeFunc, options?: QueryOptions):
 ```
 
-- db 연결 host 를 인식을 못하길래 127.0.0.1로 하이 되었다.
+- db 연결 host 를 인식을 못하길래 127.0.0.1로 입력했다.
 
 ```
 await createConnection({
@@ -59,7 +60,7 @@ await createConnection({
       }).catch((err) => console.log(err)),
 ```
 
-- db 연결시 일일히 entity 를 넣어주는 것 보다는 경로를 넣어주는게 더 편했다.
+- db 연결시 일일히 entity 를 넣어주는 것 보다는 경로를 넣어주는게 더 편했다. 단 module 삭제시 dist 를 새로 업뎃 해야 오류가 발생하지 않는다.
 
 ```
 //custom provider 할 경우 dist 에서 js 를 연결해야 한다.
@@ -71,7 +72,7 @@ entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
 ## entity text는 3단계를 거쳐야 한다 (validator, graphql, database)
 
-- typescript는요? 그건 아직 잘 모르겠다. 타입 스크립도 옵션에 맞춰서 통일 시켜주자.!
+- typescript는요? 그건 아직 잘 모르겠다. 타입 스크립도 일단 옵션에 맞춰서 통일 시켜줬다.
 
 ```
   @Column({ default: false })  //database
@@ -93,4 +94,4 @@ class UpdateData extends OmitType(
 ```
 
 - class-validator 로 중복되는 not found exception 을 피할 수 있다.
-- transform 까지 같이 사용하면서 데코레이터를 커텀 한다면 꽤 괜찮을 것 같음.
+- transform 까지 같이 사용하면서 데코레이터를 커스텀 한다면 꽤 괜찮을 것 같으나 거기까지 할 일은 거의 없을듯 하다.

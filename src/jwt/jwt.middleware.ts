@@ -23,6 +23,7 @@ export class JwtMiddleware implements NestMiddleware {
           const user = await this.userRepo.findOne({ id: payload['id'] });
           if (!user) throw new NotFoundException();
           const { password, ...rest } = user;
+          console.log('middleware', user);
           req['user'] = rest;
         }
       }

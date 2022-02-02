@@ -30,6 +30,9 @@ import { EmailModule } from './email/email.module';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         TOKEN_SECRET: Joi.string().required(),
+        MAIL_KEY: Joi.string().required(),
+        MAIL_DOMAIN: Joi.string().required(),
+        MAIL_FROM: Joi.string().required(),
       }),
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       envFilePath:
@@ -49,7 +52,11 @@ import { EmailModule } from './email/email.module';
       autoSchemaFile: true,
       context: ({ req }) => ({ user: req['user'] }),
     }),
-    EmailModule.forRoot({ EMAI_KEY: 'asdf' }),
+    EmailModule.forRoot({
+      EMAI_KEY: process.env.MAIL_KEY,
+      MAIL_DOMAIN: process.env.MAIL_DOMAIN,
+      MAIL_FROM: process.env.MAIL_FROM,
+    }),
     JwtModule.forRoot({ privateKey: process.env.TOKEN_SECRET }),
     TypeOrmModule.forFeature([UserRepo]),
     CoreModule,

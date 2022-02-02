@@ -1,3 +1,4 @@
+import { EmailService } from './../email/email.service';
 import { VerifyRepo } from './repository/verify.repository';
 import { UpdateDto, OutUpdate } from './dtos/update.dto';
 import { ProfileDto, OutProfile } from './dtos/profile.dto';
@@ -21,20 +22,24 @@ export class UserService {
     private readonly userRepo: UserRepo,
     private readonly jwtService: JwtService,
     private readonly verifyRepo: VerifyRepo,
+    private readonly emailService: EmailService,
   ) {}
 
   private readonly take = 10;
+
   async findAll(args: FindAllDto) {
     const [results, total] = await this.userRepo.findAndCount({
       take: (args.page - 1) * this.take,
     });
-
     return results;
   }
 
   async register(args: RegisterDto): Promise<OutRegister> {
     const user = await this.userRepo.save(this.userRepo.create(args));
-    await this.createVerify(user.id);
+    const test = await this.createVerify(user.id);
+    const mailValues = { subject: 'title', template: 'authen', to: user.email };
+    const tempValues = { user: user.id + '', href: 'https://naver.com', test };
+    await this.emailService.send(mailValues, tempValues);
     return { isSuccess: true, user };
   }
 
@@ -58,10 +63,12 @@ export class UserService {
     }
 
     const userObj = this.userRepo.create({ id, ...user });
-    console.log(userObj);
     if (user.email) {
-      await this.deleteVerify(userObj.id);
-      await this.createVerify(userObj.id);
+      await this.verifyRepo.delete({ user: { id } });
+      const test = await this.createVerify(userObj.id);
+      const mailValues = { subject: 't', template: 'authen', to: user.email };
+      const tempValues = { user: id + '', href: 'https://naver.com', test };
+      await this.emailService.send(mailValues, tempValues);
     }
 
     const { role, email } = await this.userRepo.save(userObj);
@@ -73,18 +80,13 @@ export class UserService {
     if (!verify) throw new NotFoundException();
     verify.user.isEmailVerified = true;
     await this.userRepo.save(verify.user);
-    await this.verifyRepo.delete({ id: verify.id });
+    await this.verifyRepo.delete(verify.id);
     return { isSuccess: true };
-  }
-
-  async deleteVerify(userId: number) {
-    const isExist = await this.verifyRepo.findByUserId(userId);
-    if (!isExist) return;
-    await this.verifyRepo.delete({ id: isExist.id });
   }
 
   async createVerify(userId: number) {
     const verify = this.verifyRepo.create({ user: { id: userId } });
-    await this.verifyRepo.save(verify);
+    const v = await this.verifyRepo.save(verify);
+    return v.code;
   }
 }

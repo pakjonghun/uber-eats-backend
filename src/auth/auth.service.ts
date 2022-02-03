@@ -8,7 +8,12 @@ export class AuthService {
 
   async validate({ email, password }: LoginDto): Promise<number> {
     const user = await this.userRepo.findByEmail(email);
-    if (user && (await user.checkPassword(password))) return user.id;
-    throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException();
+
+    const isPasswordCorrect = await user.checkPassword(password);
+
+    if (!isPasswordCorrect) throw new UnauthorizedException();
+
+    return user.id;
   }
 }

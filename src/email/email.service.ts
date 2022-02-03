@@ -8,13 +8,13 @@ import * as FormData from 'form-data';
 export class EmailService {
   constructor(@Inject(OPTIONS) private readonly options: EmailOptions) {}
 
-  private templateValuesMaker(values: TemplateValues) {
+  templateValuesMaker(values: TemplateValues) {
     const tempArr = [];
     for (const v in values) tempArr.push(`"${v}":"${values[v]}"`);
     return tempArr.join(',');
   }
 
-  private formMaker(values: Emailvalues, templateValues: TemplateValues) {
+  formMaker(values: Emailvalues, templateValues: TemplateValues) {
     const form = new FormData();
     const tempForm = this.templateValuesMaker(templateValues);
     for (const v in values) form.append(v, values[v]);
@@ -30,10 +30,9 @@ export class EmailService {
   async send(emailVal: Emailvalues, templateVal: TemplateValues) {
     const form = this.formMaker(emailVal, templateVal);
 
-    await got(
+    await got.post(
       `https://api.mailgun.net/v3/${this.options.MAIL_DOMAIN}/messages`,
       {
-        method: 'POST',
         headers: {
           Authorization: `Basic ${Buffer.from(
             `api:${this.options.EMAI_KEY}`,

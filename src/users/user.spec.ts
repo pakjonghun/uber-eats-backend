@@ -1,4 +1,3 @@
-import { Verify } from './entities/verify.entity';
 import { Role } from './entities/users.entity';
 import { JwtService } from './../jwt/jwt.service';
 import { AuthService } from './../auth/auth.service';

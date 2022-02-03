@@ -1,14 +1,6 @@
-import { Verify } from './verify.entity';
 import { Core } from '../../core/entities/core.entity';
-import { ArgsType, Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import {
-  Entity,
-  Column,
-  BeforeInsert,
-  BeforeUpdate,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
 import {
   IsBoolean,
   IsEmail,
@@ -18,9 +10,8 @@ import {
   Length,
 } from 'class-validator';
 import * as bcrypt from 'bcrypt';
-import { IsEmailExist } from 'src/auth/validate.decorator';
 
-enum Role {
+export enum Role {
   'Delevery' = 'Delevery',
   'Client' = 'Client',
   'Owner' = 'Owner',

@@ -1,5 +1,5 @@
 import { Users } from './../entities/users.entity';
-import { OutMutation } from './../../core/dtos/mutation';
+import { OutMutation } from '../../core/dtos/mutation.dto';
 import {
   ArgsType,
   Field,

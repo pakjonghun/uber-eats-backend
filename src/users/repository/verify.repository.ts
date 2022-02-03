@@ -10,4 +10,10 @@ export class VerifyRepo extends Repository<Verify> {
   findByUserId(id: number) {
     return this.findOne({ user: { id } }, { relations: ['user'] });
   }
+
+  async createVerify(userId: number) {
+    const verify = this.create({ user: { id: userId } });
+    const v = await this.save(verify);
+    return v.code;
+  }
 }

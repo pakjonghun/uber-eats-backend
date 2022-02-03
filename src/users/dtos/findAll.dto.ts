@@ -1,4 +1,4 @@
-import { PagnationDto } from './../../core/dtos/pagnation';
+import { PagnationDto } from '../../core/dtos/pagnation.dto';
 import { Users } from './../entities/users.entity';
 import { ArgsType, ObjectType, OmitType } from '@nestjs/graphql';
 

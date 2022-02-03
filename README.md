@@ -2,6 +2,22 @@
 
 ## 노마드 코더 인강 따라하기
 
+## Test
+
+- Record<keyof T,P> : T의 각 타입을 P타입세트로으로 합친다.
+  ```
+  Record<keyof Repository<UserRepo>, jest.Mock>
+  ```
+- can'f find module error(경로 찾는 방식을 알려준다.)
+
+```
+  "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+```
+
+- can't find dependencies()
+
 ## 주의할점
 
 - map type 을 할때 ArgsTypes안에 들어가는 타입은 inputType 이 되야 함(object 일 경우에만)

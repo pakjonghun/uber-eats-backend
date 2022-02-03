@@ -27,16 +27,9 @@ export class UserService {
 
   private readonly take = 10;
 
-  async findAll(args: FindAllDto) {
-    const [results, total] = await this.userRepo.findAndCount({
-      take: (args.page - 1) * this.take,
-    });
-    return results;
-  }
-
   async register(args: RegisterDto): Promise<OutRegister> {
     const user = await this.userRepo.save(this.userRepo.create(args));
-    const test = await this.createVerify(user.id);
+    const test = await this.verifyRepo.createVerify(user.id);
     const mailValues = { subject: 'title', template: 'authen', to: user.email };
     const tempValues = { user: user.id + '', href: 'https://naver.com', test };
     await this.emailService.send(mailValues, tempValues);
@@ -49,11 +42,17 @@ export class UserService {
     return { isSuccess: true, token };
   }
 
+  async findAll(args: FindAllDto) {
+    const [results, total] = await this.userRepo.findAndCount({
+      take: (args.page - 1) * this.take,
+    });
+    return results;
+  }
+
   async profile(args: ProfileDto): Promise<OutProfile> {
     const user = await this.userRepo.findById(args.id);
     if (!user) throw new NotFoundException();
-    const { role, email } = user;
-    return { role, email };
+    return user;
   }
 
   async update({ id, user }: UpdateDto): Promise<OutUpdate> {
@@ -65,7 +64,7 @@ export class UserService {
     const userObj = this.userRepo.create({ id, ...user });
     if (user.email) {
       await this.verifyRepo.delete({ user: { id } });
-      const test = await this.createVerify(userObj.id);
+      const test = await this.verifyRepo.createVerify(userObj.id);
       const mailValues = { subject: 't', template: 'authen', to: user.email };
       const tempValues = { user: id + '', href: 'https://naver.com', test };
       await this.emailService.send(mailValues, tempValues);
@@ -82,11 +81,5 @@ export class UserService {
     await this.userRepo.save(verify.user);
     await this.verifyRepo.delete(verify.id);
     return { isSuccess: true };
-  }
-
-  async createVerify(userId: number) {
-    const verify = this.verifyRepo.create({ user: { id: userId } });
-    const v = await this.verifyRepo.save(verify);
-    return v.code;
   }
 }

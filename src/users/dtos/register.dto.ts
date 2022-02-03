@@ -1,4 +1,4 @@
-import { OutMutation } from './../../core/dtos/mutation';
+import { OutMutation } from '../../core/dtos/mutation.dto';
 import { Users } from './../entities/users.entity';
 import { ArgsType, Field, ObjectType, OmitType } from '@nestjs/graphql';
 import { IsEmail } from 'class-validator';
@@ -7,7 +7,7 @@ import { IsEmailExist } from 'src/auth/validate.decorator';
 @ArgsType()
 export class RegisterDto extends OmitType(
   Users,
-  ['createdAt', 'updatedAt', 'id', 'email'],
+  ['createdAt', 'updatedAt', 'id', 'email', 'checkPassword', 'hashPassword'],
   ArgsType,
 ) {
   @Field(() => String)

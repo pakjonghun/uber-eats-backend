@@ -1,4 +1,4 @@
-import { OutMutation } from './../../core/dtos/mutation';
+import { OutMutation } from '../../core/dtos/mutation.dto';
 import { Users } from './../entities/users.entity';
 import { ArgsType, PickType, ObjectType, Field } from '@nestjs/graphql';
 import { IsEmail, IsOptional, IsString } from 'class-validator';

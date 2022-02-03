@@ -1,5 +1,5 @@
 import { Verify } from './../entities/verify.entity';
-import { OutMutation } from './../../core/dtos/mutation';
+import { OutMutation } from '../../core/dtos/mutation.dto';
 import { ObjectType, ArgsType, PickType } from '@nestjs/graphql';
 
 @ObjectType()

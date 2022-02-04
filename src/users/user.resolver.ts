@@ -11,7 +11,15 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './decorators/user.decorator';
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Catch,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+  NotFoundException,
+  UseFilters,
+  Post,
+} from '@nestjs/common';
 
 @Resolver()
 export class UserResolver {
@@ -22,6 +30,7 @@ export class UserResolver {
 
   @Query(() => [OutFindAll])
   findAll(): Promise<OutFindAll[]> {
+    throw new HttpException('123', 400);
     return this.userService.findAll({});
   }
 

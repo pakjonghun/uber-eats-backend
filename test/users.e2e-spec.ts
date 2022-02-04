@@ -2,9 +2,9 @@ import { VerifyRepo } from './../src/users/repository/verify.repository';
 import { UserRepo } from './../src/users/repository/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { getConnection } from 'typeorm';
+import { AppModule } from '../src/app.module';
+import * as request from 'supertest';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const EMAIL = 'fireking5997@gmail.com';
@@ -45,7 +45,6 @@ describe('UserModule (e2e)', () => {
           isSuccess
           user{
             id
-            role
             isEmailVerified
           }
         }
@@ -62,7 +61,6 @@ describe('UserModule (e2e)', () => {
           isSuccess
           user{
             id
-            role
             isEmailVerified
           }
         }

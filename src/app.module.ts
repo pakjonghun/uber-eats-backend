@@ -1,5 +1,6 @@
 import { UserRepo } from './users/repository/user.repository';
 import {
+  InternalServerErrorException,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { EmailModule } from './email/email.module';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -52,7 +54,15 @@ import { EmailModule } from './email/email.module';
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
+      debug: false,
       context: ({ req }) => ({ user: req['user'] }),
+      formatError: (err) => {
+        if (err.message.startsWith('Database Error')) {
+          return new InternalServerErrorException('database error occured');
+        } else {
+          return err;
+        }
+      },
     }),
     EmailModule.forRoot({
       EMAI_KEY: process.env.MAIL_KEY,

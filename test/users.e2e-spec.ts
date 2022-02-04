@@ -5,7 +5,6 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { getConnection } from 'typeorm';
-import exp from 'constants';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const EMAIL = 'fireking5997@gmail.com';
@@ -33,44 +32,41 @@ describe('UserModule (e2e)', () => {
     app.close();
   });
 
+  const commonTest = () => request(app.getHttpServer()).post(GRAPHQL_ENDPOINT);
+  const privateTest = (query: string) =>
+    commonTest().set('authorization', token).send({ query });
+  const publicTest = (query: string) => commonTest().send({ query });
+
   describe('register', () => {
     it('should register account', async () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-            register(email:"${EMAIL}",
-              password:"${PASSWORD}"){
-              isSuccess
-              user{
-                id
-                role
-                isEmailVerified
-              }
-            }
-          }`,
-        })
+      return publicTest(`mutation{
+        register(email:"${EMAIL}",
+          password:"${PASSWORD}"){
+          isSuccess
+          user{
+            id
+            role
+            isEmailVerified
+          }
+        }
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data.register.isSuccess).toBeTruthy())
         .expect((res) => expect(res.body.data.register.error).toBe(undefined));
     });
 
     it('should return error', async () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-            register(email:"${EMAIL}",
-              password:"${PASSWORD}"){
-              isSuccess
-              user{
-                id
-                role
-                isEmailVerified
-              }
-            }
-          }`,
-        })
+      return publicTest(`mutation{
+        register(email:"${EMAIL}",
+          password:"${PASSWORD}"){
+          isSuccess
+          user{
+            id
+            role
+            isEmailVerified
+          }
+        }
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data).toBe(null))
         .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)));
@@ -79,31 +75,23 @@ describe('UserModule (e2e)', () => {
 
   describe('login', () => {
     it('should throw error', async () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-              login(email:"karolos5997@gmail.com",password:"${PASSWORD}"){
-                 token
-              }
-            }`,
-        })
+      return publicTest(`mutation{
+        login(email:"karolos5997@gmail.com",password:"${PASSWORD}"){
+           token
+        }
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data).toEqual(null))
         .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)));
     });
 
     it('should login', async () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-          login(email:"${EMAIL}",password:"12345"){
-             token
-             isSuccess
-          }
-        }`,
-        })
+      return publicTest(`mutation{
+        login(email:"${EMAIL}",password:"12345"){
+           token
+           isSuccess
+        }
+      }`)
         .expect(200)
         .expect((res) => {
           token = res.body.data.login.token;
@@ -122,19 +110,14 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `mutation{
-          update(id:${id},user:{email:"${newEmail}",password:"123456"}){
-             UpdatedUser{
-              email
-            }
-            isSuccess
+      return privateTest(`mutation{
+        update(id:${id},user:{email:"${newEmail}",password:"123456"}){
+           UpdatedUser{
+            email
           }
-        }`,
-        })
+          isSuccess
+        }
+      }`)
         .expect(200)
         .expect((res) =>
           expect(res.body.data.update.UpdatedUser.email).toBe(newEmail),
@@ -142,18 +125,14 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should throw error', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `mutation{
-          update(id:2,user:{email:"karolos5997@naver.com",password:"123456"}){
-             UpdatedUser{
-              email
-            }
-            isSuccess
+      return privateTest(`mutation{
+        update(id:2,user:{email:"karolos5997@naver.com",password:"123456"}){
+           UpdatedUser{
+            email
           }
-        }`,
-        })
+          isSuccess
+        }
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data).toEqual(null))
         .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)));
@@ -162,35 +141,26 @@ describe('UserModule (e2e)', () => {
 
   describe('me', () => {
     it('should return me', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `{
-      me{
-        id
-        isEmailVerified
-        updatedAt
-      }
-    }`,
-        })
+      return privateTest(`{
+        me{
+          id
+          isEmailVerified
+          updatedAt
+        }
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data.me.id).toBe(1));
     });
 
     it('should not return me', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .send({
-          query: `{
-          me{
-            id
-            isEmailVerified
-            password
-            updatedAt
-          }
-        }`,
-        })
+      return privateTest(`{
+        me{
+          id
+          isEmailVerified
+          password
+          updatedAt
+        }
+      }`)
         .set('authorization', token)
         .expect(200)
         .expect((res) => expect(res.body.data.me).toBe(null))
@@ -199,37 +169,27 @@ describe('UserModule (e2e)', () => {
   });
   describe('profile', () => {
     it('should return profile', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `
-          {
-            profile(id:1){
-              email,
-              role
-            }
-          }
-          `,
-        })
+      return privateTest(`
+      {
+        profile(id:1){
+          email,
+          role
+        }
+      }
+      `)
         .expect(200)
         .expect((res) => expect(res.body.data.profile.role).toBe('Client'));
     });
 
     it('should return error', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `
-          {
-            profile(id:2){
-              email,
-              role
-            }
-          }
-          `,
-        })
+      return privateTest(`
+      {
+        profile(id:2){
+          email,
+          role
+        }
+      }
+      `)
         .expect(200)
         .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)))
         .expect((res) => expect(res.body.data).toBe(null));
@@ -244,16 +204,11 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should return email', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `mutation{
+      return privateTest(`mutation{
         verifyEmail(code:"${code}"){
           isSuccess
         }
-      }`,
-        })
+      }`)
         .expect(200)
         .expect((res) =>
           expect(res.body.data.verifyEmail.isSuccess).toBeTruthy(),
@@ -261,16 +216,11 @@ describe('UserModule (e2e)', () => {
     });
 
     it('should return fail', () => {
-      return request(app.getHttpServer())
-        .post(GRAPHQL_ENDPOINT)
-        .set('authorization', token)
-        .send({
-          query: `mutation{
+      return privateTest(`mutation{
         verifyEmail(code:"asdf"){
           isSuccess
         }
-      }`,
-        })
+      }`)
         .expect(200)
         .expect((res) => expect(res.body.data).toBe(null))
         .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)));

@@ -61,7 +61,7 @@ export class UserResolver {
       );
     }
 
-    return this.userService.update(args);
+    return this.userService.update(me, args);
   }
 
   @Mutation(() => OutVerify)

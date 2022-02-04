@@ -29,17 +29,18 @@ export class EmailService {
 
   async send(emailVal: Emailvalues, templateVal: TemplateValues) {
     const form = this.formMaker(emailVal, templateVal);
-
-    await got.post(
-      `https://api.mailgun.net/v3/${this.options.MAIL_DOMAIN}/messages`,
-      {
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `api:${this.options.EMAI_KEY}`,
-          ).toString('base64')}`,
+    try {
+      await got.post(
+        `https://api.mailgun.net/v3/${this.options.MAIL_DOMAIN}/messages`,
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `api:${this.options.EMAI_KEY}`,
+            ).toString('base64')}`,
+          },
+          body: form,
         },
-        body: form,
-      },
-    );
+      );
+    } catch (err) {}
   }
 }

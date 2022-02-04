@@ -23,7 +23,9 @@ import { EmailModule } from './email/email.module';
       cache: true,
       isGlobal: true,
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('development', 'production'),
+        NODE_ENV: Joi.string()
+          .valid('development', 'test', 'production')
+          .required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),

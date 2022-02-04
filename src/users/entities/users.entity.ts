@@ -47,7 +47,6 @@ export class Users extends Core {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    console.log(this.password);
     if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
     }

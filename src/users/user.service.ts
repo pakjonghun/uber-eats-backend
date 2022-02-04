@@ -1,3 +1,4 @@
+import { Users } from './entities/users.entity';
 import { EmailService } from './../email/email.service';
 import { VerifyRepo } from './repository/verify.repository';
 import { UpdateDto, OutUpdate } from './dtos/update.dto';
@@ -55,9 +56,10 @@ export class UserService {
     return user;
   }
 
-  async update({ id, user }: UpdateDto): Promise<OutUpdate> {
+  async update(me: Users, { id, user }: UpdateDto): Promise<OutUpdate> {
     if (!(await this.userRepo.isExistById(id))) throw new NotFoundException();
-    if (user.email && (await this.userRepo.findByEmail(user.email))) {
+    const isExist = await this.userRepo.findByEmail(user.email);
+    if (user.email && isExist && isExist.id !== me.id) {
       throw new ForbiddenException();
     }
 
@@ -69,7 +71,6 @@ export class UserService {
       const tempValues = { user: id + '', href: 'https://naver.com', test };
       await this.emailService.send(mailValues, tempValues);
     }
-
     const { role, email } = await this.userRepo.save(userObj);
     return { isSuccess: true, UpdatedUser: { role, email } };
   }

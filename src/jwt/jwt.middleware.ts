@@ -1,10 +1,5 @@
 import { UserRepo } from './../users/repository/user.repository';
-import {
-  GoneException,
-  Injectable,
-  NestMiddleware,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware, NotFoundException } from '@nestjs/common';
 import { NextFunction } from 'express';
 import { JwtService } from './jwt.service';
 
@@ -23,7 +18,6 @@ export class JwtMiddleware implements NestMiddleware {
           const user = await this.userRepo.findOne({ id: payload['id'] });
           if (!user) throw new NotFoundException();
           const { password, ...rest } = user;
-          console.log('middleware', user);
           req['user'] = rest;
         }
       }

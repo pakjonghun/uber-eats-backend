@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { OutRegisterRest, RegisterRestDto } from './dtos/register.dto';
 import { OutDelete } from './dtos/delete.dto';
+import { FindAllCate } from './dtos/catefind.dto';
 
 @Injectable()
 export class RestService {
@@ -69,5 +70,14 @@ export class RestService {
     this.checkIsMine(userId, rest.ownerId);
     await this.restRepo.delete(restId);
     return { isSuccess: true, rest };
+  }
+
+  async findAllCate(): Promise<FindAllCate> {
+    const data = await this.cateRepo.find();
+    return { data };
+  }
+
+  async countRest() {
+    return this.restRepo.count();
   }
 }

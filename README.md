@@ -2,6 +2,26 @@
 
 ## 노마드 코더 인강 따라하기
 
+## Dynamic Field
+
+- @Resolver() 에 타입을 지정해 주면 그 타입 안에 다이나믹 필드를 넣을 수 있다.
+
+```
+
+@Resolver(() => Cate)
+export class CateResolver {
+  constructor(private readonly restService: RestService) {}
+
+  @ResolveField(() => Int)
+  async restaurantCount(): Promise<number> {
+    return this.restService.countRest();
+  }
+
+
+}
+
+```
+
 ## 찾기 어려운 실수
 
 - 비동기가 아닌데 비동기로 처리 할 경우

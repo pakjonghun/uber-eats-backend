@@ -1,7 +1,16 @@
+import { Cate } from './entities/category.entity';
+import { FindAllCate } from './dtos/catefind.dto';
 import { RestService } from './rest.service';
 import { Users } from './../users/entities/users.entity';
 import { User } from './../users/decorators/user.decorator';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Resolver,
+  Query,
+  ResolveField,
+  Int,
+} from '@nestjs/graphql';
 import { OutRegisterRest, RegisterRestDto } from './dtos/register.dto';
 import { SetRole } from 'src/auth/role.decorator';
 import { OutRestUpdate, UpdateRestDto } from './dtos/update.dto';
@@ -36,5 +45,20 @@ export class RestResolver {
     @Args() args: DeleteDto,
   ): Promise<OutDelete> {
     return this.restService.deleteRest(me.id, args.id);
+  }
+}
+
+@Resolver(() => Cate)
+export class CateResolver {
+  constructor(private readonly restService: RestService) {}
+
+  @ResolveField(() => Int)
+  async restaurantCount(): Promise<number> {
+    return this.restService.countRest();
+  }
+
+  @Query(() => FindAllCate)
+  findAllCate(): Promise<FindAllCate> {
+    return this.restService.findAllCate();
   }
 }

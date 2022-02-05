@@ -1,14 +1,12 @@
 import { Users } from './../entities/users.entity';
 import { OutMutation } from '../../core/dtos/mutation.dto';
 import {
-  ArgsType,
   Field,
-  InputType,
   ObjectType,
-  PartialType,
   PickType,
+  PartialType,
+  ArgsType,
 } from '@nestjs/graphql';
-import { IsOptional, IsString, Length } from 'class-validator';
 
 @ObjectType()
 class UpdatedUser extends PickType(Users, ['role', 'email']) {}
@@ -19,20 +17,8 @@ export class OutUpdate extends OutMutation {
   UpdatedUser?: UpdatedUser;
 }
 
-@InputType()
-class UpdateUser extends PartialType(UpdatedUser, InputType) {
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @Length(5, 10)
-  @IsOptional()
-  password?: string;
-}
-
 @ArgsType()
-export class UpdateDto {
-  @Field(() => Number)
-  id: number;
-
-  @Field(() => UpdateUser)
-  user: UpdateUser;
-}
+export class UpdateDto extends PartialType(
+  PickType(Users, ['email', 'password', 'role']),
+  ArgsType,
+) {}

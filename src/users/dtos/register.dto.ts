@@ -7,7 +7,15 @@ import { IsEmailExist } from 'src/auth/validate.decorator';
 @ArgsType()
 export class RegisterDto extends OmitType(
   Users,
-  ['createdAt', 'updatedAt', 'id', 'email', 'checkPassword', 'hashPassword'],
+  [
+    'createdAt',
+    'updatedAt',
+    'id',
+    'email',
+    'checkPassword',
+    'hashPassword',
+    'rest',
+  ],
   ArgsType,
 ) {
   @Field(() => String)

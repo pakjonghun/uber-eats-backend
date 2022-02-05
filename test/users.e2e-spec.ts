@@ -1,7 +1,7 @@
 import { VerifyRepo } from './../src/users/repository/verify.repository';
 import { UserRepo } from './../src/users/repository/user.repository';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
@@ -22,6 +22,7 @@ describe('UserModule (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
     verifyRepo = app.get<VerifyRepo>(VerifyRepo);
     userRepo = app.get<UserRepo>(UserRepo);
@@ -109,7 +110,7 @@ describe('UserModule (e2e)', () => {
 
     it('should', () => {
       return privateTest(`mutation{
-        update(id:${id},user:{email:"${newEmail}",password:"123456"}){
+        update(email:"${newEmail}",password:"123456"){
            UpdatedUser{
             email
           }
@@ -120,20 +121,6 @@ describe('UserModule (e2e)', () => {
         .expect((res) =>
           expect(res.body.data.update.UpdatedUser.email).toBe(newEmail),
         );
-    });
-
-    it('should throw error', () => {
-      return privateTest(`mutation{
-        update(id:2,user:{email:"karolos5997@naver.com",password:"123456"}){
-           UpdatedUser{
-            email
-          }
-          isSuccess
-        }
-      }`)
-        .expect(200)
-        .expect((res) => expect(res.body.data).toEqual(null))
-        .expect((res) => expect(res.body.errors).toEqual(expect.any(Array)));
     });
   });
 

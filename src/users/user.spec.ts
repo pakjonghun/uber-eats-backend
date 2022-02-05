@@ -228,20 +228,11 @@ describe('userservice', () => {
     const user = { email: '', role: Role.Client };
     const newUser = { email: 'a', role: Role.Owner };
 
-    it('should return exception', async () => {
-      userRepo.isExistById.mockResolvedValue(null);
-      try {
-        await service.update({ id, user: newUser });
-      } catch (err) {
-        expect(err).toStrictEqual(new NotFoundException());
-      }
-    });
-
     it('should return new forbidden exception', async () => {
       userRepo.isExistById.mockResolvedValue(newUser);
       userRepo.findByEmail.mockResolvedValue(user);
       try {
-        await service.update({ id, user: newUser });
+        await service.update(id, newUser);
       } catch (err) {
         expect(err).toStrictEqual(new ForbiddenException());
       }
@@ -252,7 +243,7 @@ describe('userservice', () => {
       userRepo.findByEmail.mockResolvedValue(null);
       userRepo.save.mockResolvedValue({ id, ...newUser });
       userRepo.create.mockReturnValue({ id, ...newUser });
-      const r = await service.update({ id, user: newUser });
+      const r = await service.update(id, newUser);
       expect(r).toStrictEqual({ isSuccess: true, UpdatedUser: newUser });
     });
   });

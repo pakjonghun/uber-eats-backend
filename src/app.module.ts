@@ -17,7 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { EmailModule } from './email/email.module';
-import { APP_FILTER } from '@nestjs/core';
+import { RestModule } from './rest/rest.module';
 
 @Module({
   imports: [
@@ -57,9 +57,14 @@ import { APP_FILTER } from '@nestjs/core';
       debug: false,
       context: ({ req }) => ({ user: req['user'] }),
       formatError: (err) => {
-        if (err.message.startsWith('Database Error')) {
+        if (
+          err.message.startsWith('Database Error') ||
+          err.message.startsWith('Field')
+        ) {
+          console.log(err);
           return new InternalServerErrorException('database error occured');
         } else {
+          console.log(err);
           return err;
         }
       },
@@ -74,6 +79,7 @@ import { APP_FILTER } from '@nestjs/core';
     CoreModule,
     UsersModule,
     AuthModule,
+    RestModule,
   ],
   controllers: [],
   providers: [],

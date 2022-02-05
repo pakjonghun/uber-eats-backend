@@ -56,18 +56,19 @@ export class UserService {
     return user;
   }
 
-  async update(me: Users, { id, user }: UpdateDto): Promise<OutUpdate> {
-    if (!(await this.userRepo.isExistById(id))) throw new NotFoundException();
-    const isExist = await this.userRepo.findByEmail(user.email);
-    if (user.email && isExist && isExist.id !== me.id) {
-      throw new ForbiddenException();
+  async update(id: number, args: UpdateDto): Promise<OutUpdate> {
+    if (args.email) {
+      const isExist = await this.userRepo.findByEmail(args.email);
+      if (isExist && isExist.id !== id) {
+        throw new ForbiddenException();
+      }
     }
 
-    const userObj = this.userRepo.create({ id, ...user });
-    if (user.email) {
+    const userObj = this.userRepo.create({ id, ...args });
+    if (args.email) {
       await this.verifyRepo.delete({ user: { id } });
       const test = await this.verifyRepo.createVerify(userObj.id);
-      const mailValues = { subject: 't', template: 'authen', to: user.email };
+      const mailValues = { subject: 't', template: 'authen', to: args.email };
       const tempValues = { user: id + '', href: 'https://naver.com', test };
       await this.emailService.send(mailValues, tempValues);
     }

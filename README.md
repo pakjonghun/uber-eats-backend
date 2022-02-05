@@ -2,7 +2,19 @@
 
 ## 노마드 코더 인강 따라하기
 
+## 찾기 어려운 실수
+
+- 비동기가 아닌데 비동기로 처리 할 경우
+  - 몰랐었는데 서버가 죽는다. 깜짝 놀라서 왜 그런지 찾다가 알게되었다.
+  - gql 모듈까지 에러가 가지도 않고 바로 그 자리에서 서버가 죽어버린다.
+
 ## Test
+
+- 테스트 환경도 본섭과 똑같이 만들어 주자 예)
+
+```
+app.useGlobalPipes(new ValidationPipe());
+```
 
 - Record<keyof T,P> : T의 각 타입을 P타입세트로으로 합친다.
   ```
@@ -16,9 +28,17 @@
     },
 ```
 
-- can't find dependencies()
-
 ## 주의할점
+
+- gql 의 dto 는 entity 와 연결되어서 input type 인지 argType 인지 에 따라 스키마 에 영향을 주므로 조심해야 한다.
+
+  - 이제까지는 한번 더 depth 를 타는것이 싫어서 argType으로 적용했는데
+  - 이렇게 되면 일일히 argType 이라고 명시를 해주어야 하는 번거로움이 있었음.
+  - 게다가 스키마 이름이 중복되면 안되므로 inputtype 를 해서 사용하는 경우 이름을 다르게 지정해 줘야 했다.
+  - 다른방법으로 entity 에 @InputType('inputName',{abstract:true})방법은
+  - 뎁스를 한번 더 타는 대신 일일히 타입을 명시해주는 번거로움이 줄어든다.
+  - 또 다른 방법을 두 가지 방법을 섞는 방법이다. inputtype을 사용할때를 대비해서 미리 @inputType('name',{abstract:true})를 미리 넣어두고 사용하는 방법이다.
+  - 일단 지금 하는 방식으로 해도 상관은 없을 듯 하지만 장단점을 잘 따져야 할 것 같다.
 
 - map type 을 할때 ArgsTypes안에 들어가는 타입은 inputType 이 되야 함(object 일 경우에만)
 - service 와 repo 를 나누면 순환참조 할 일이 없다. typeorm repo custom 방법 https://docs.nestjs.com/techniques/database#custom-repository

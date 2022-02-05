@@ -1,6 +1,7 @@
+import { Rest } from './../../rest/entities/rest.entity';
 import { Core } from '../../core/entities/core.entity';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Entity, Column, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
 import {
   IsBoolean,
   IsEmail,
@@ -43,6 +44,10 @@ export class Users extends Core {
   @IsBoolean()
   @Field(() => Boolean, { defaultValue: false })
   isEmailVerified?: boolean;
+
+  @Field(() => [Rest])
+  @OneToMany(() => Rest, (rest) => rest.owner)
+  rest: Rest[];
 
   @BeforeInsert()
   @BeforeUpdate()

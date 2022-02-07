@@ -18,6 +18,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { EmailModule } from './email/email.module';
 import { RestModule } from './rest/rest.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -76,10 +77,11 @@ import { RestModule } from './rest/rest.module';
     }),
     JwtModule.forRoot({ privateKey: process.env.TOKEN_SECRET }),
     TypeOrmModule.forFeature([UserRepo]),
-    CoreModule,
+    CoreModule.forRoot({ take: 2 }),
     UsersModule,
     AuthModule,
     RestModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

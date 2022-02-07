@@ -1,7 +1,7 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ArgsType, InputType } from '@nestjs/graphql';
 import { IsNumber, IsOptional } from 'class-validator';
 
-@ObjectType()
+@ArgsType()
 export class PagnationDto {
   @IsNumber()
   @IsOptional()
@@ -9,6 +9,7 @@ export class PagnationDto {
   page?: number;
 }
 
+@ObjectType()
 export class OutPagnation {
   @IsNumber()
   @IsOptional()

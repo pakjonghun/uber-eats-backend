@@ -1,6 +1,12 @@
+import { OrderEntity } from './../../order/entities/order.entity';
 import { Rest } from './../../rest/entities/rest.entity';
 import { Core } from '../../core/entities/core.entity';
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  ObjectType,
+  registerEnumType,
+  InputType,
+} from '@nestjs/graphql';
 import { Entity, Column, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
 import {
   IsBoolean,
@@ -22,6 +28,7 @@ registerEnumType(Role, { name: 'Role' });
 
 @Entity()
 @ObjectType()
+@InputType('inputTypeUserss')
 export class Users extends Core {
   @Column({ type: 'enum', enum: Role, default: 'Client' })
   @Field(() => Role, { defaultValue: 'Client' })
@@ -45,9 +52,17 @@ export class Users extends Core {
   @Field(() => Boolean, { defaultValue: false })
   isEmailVerified?: boolean;
 
-  @Field(() => [Rest])
   @OneToMany(() => Rest, (rest) => rest.owner)
+  @Field(() => [Rest])
   rest: Rest[];
+
+  @OneToMany(() => OrderEntity, (order) => order.driver)
+  @Field(() => [OrderEntity])
+  deliveryOrders: OrderEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.custom)
+  @Field(() => [OrderEntity])
+  customOrders: OrderEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()

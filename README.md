@@ -24,6 +24,15 @@ export class CateResolver {
 
 ## 찾기 어려운 실수
 
+- gql 에서 entity 를 만들때 필수 decorator 는
+
+  - @ObjectTYpe:gql 객체 형태로 field 에 내보낸다.
+  - @InputType:gql 객체 형태로 field 에 내보낼 수 있는 args, args name이 지정되야 하며
+    - entity 간에 관계를 맺을때도 꼭 필요하다 inputType 으로 임포트 해서 field 적용하기 떄문이다.
+    - type 이 json 인 column 을 만들때도 필요하다 field 에 그 타입을 inputType 으로 넣어주기 때문이다.
+    - 클레스 내부에 들어가는 클레스를 넣을때 웬만하면 inputType 으로 적용된다.
+    - 단 output 내부에 들어가는 클레스는 objectType 으로 적용될때도 있다(dto 의 경우)
+
 - 비동기가 아닌데 비동기로 처리 할 경우
   - 몰랐었는데 서버가 죽는다. 깜짝 놀라서 왜 그런지 찾다가 알게되었다.
   - gql 모듈까지 에러가 가지도 않고 바로 그 자리에서 서버가 죽어버린다.

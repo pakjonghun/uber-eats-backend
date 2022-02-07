@@ -1,10 +1,11 @@
+import { OrderEntity } from './../../order/entities/order.entity';
+import { Dish } from './dish.entity';
 import { Cate } from './category.entity';
 import { Users } from './../../users/entities/users.entity';
-import { User } from './../../users/decorators/user.decorator';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional, IsString } from 'class-validator';
 import { Core } from 'src/core/entities/core.entity';
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
 @InputType('restInputType', { isAbstract: true })
 @Entity()
@@ -36,6 +37,17 @@ export class Rest extends Core {
     nullable: true,
   })
   cate?: Cate;
+
+  @OneToMany(() => Dish, (dish) => dish.rest)
+  @Field(() => [Dish])
+  dish: Dish[];
+
+  @OneToMany(() => OrderEntity, (order) => order.rest, { nullable: true })
+  @Field(() => [OrderEntity], { nullable: true })
+  order: OrderEntity[];
+
+  @RelationId((rest: Rest) => rest.cate)
+  cateId?: number;
 
   @RelationId((rest: Rest) => rest.owner)
   ownerId?: number;

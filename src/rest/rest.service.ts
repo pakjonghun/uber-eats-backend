@@ -19,6 +19,7 @@ import { OutRegisterRest, RegisterRestDto } from './dtos/register.dto';
 import { OutDelete } from './dtos/delete.dto';
 import { FindAllCate, FindAllCateDto } from './dtos/catefind.dto';
 import { OutDeleteDish } from './dtos/deleteDishDto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class RestService {
@@ -170,5 +171,9 @@ export class RestService {
     await this.dishRepo.delete(dishId);
 
     return { isSuccess: true, dish };
+  }
+
+  async findDish(dishIds: number[]) {
+    return this.dishRepo.find({ id: In(dishIds) });
   }
 }

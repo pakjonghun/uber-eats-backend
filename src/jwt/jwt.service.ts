@@ -10,9 +10,7 @@ export class JwtService {
   ) {}
 
   sign(id: number) {
-    return jwt.sign({ id }, this.options.privateKey, {
-      expiresIn: 60 * 60,
-    });
+    return jwt.sign({ id }, this.options.privateKey);
   }
 
   verify(token: string) {

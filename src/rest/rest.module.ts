@@ -9,5 +9,6 @@ import { Module } from '@nestjs/common';
 @Module({
   imports: [TypeOrmModule.forFeature([CateRepo, RestRepo, DishRepo])],
   providers: [RestResolver, RestService, CateResolver, DishResolver],
+  exports: [RestService],
 })
 export class RestModule {}

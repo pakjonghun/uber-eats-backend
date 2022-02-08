@@ -56,13 +56,15 @@ export class Users extends Core {
   @Field(() => [Rest])
   rest: Rest[];
 
-  @OneToMany(() => OrderEntity, (order) => order.driver)
-  @Field(() => [OrderEntity])
-  deliveryOrders: OrderEntity[];
+  @IsOptional()
+  @OneToMany(() => OrderEntity, (order) => order.driver, { nullable: true })
+  @Field(() => [OrderEntity], { nullable: true })
+  deliveryOrders?: OrderEntity[];
 
-  @OneToMany(() => OrderEntity, (order) => order.custom)
-  @Field(() => [OrderEntity])
-  customOrders: OrderEntity[];
+  @IsOptional()
+  @OneToMany(() => OrderEntity, (order) => order.custom, { nullable: true })
+  @Field(() => [OrderEntity], { nullable: true })
+  customOrders?: OrderEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -1,3 +1,4 @@
+import { OrderItem } from './orderItem.entity';
 import { Users } from './../../users/entities/users.entity';
 import {
   registerEnumType,
@@ -46,6 +47,9 @@ export class OrderEntity extends Core {
   @Field(() => Users, { nullable: true })
   driver?: Users;
 
+  @RelationId((order: OrderEntity) => order.custom)
+  customerId: number;
+
   @RelationId((order: OrderEntity) => order.driver)
   driverId: number;
 
@@ -56,19 +60,20 @@ export class OrderEntity extends Core {
   @RelationId((order: OrderEntity) => order.rest)
   restId: number;
 
-  @ManyToMany(() => Dish, { onDelete: 'CASCADE' })
+  @ManyToMany(() => OrderItem, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'dish_order',
-    joinColumn: { name: 'dish', referencedColumnName: 'id' },
+    joinColumn: { name: 'orderItem', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'order', referencedColumnName: 'id' },
   })
-  @Field(() => [Dish])
-  dishes: Dish[];
+  @Field(() => [OrderItem])
+  orderItems: OrderItem[];
 
+  @IsOptional()
   @IsNumber()
-  @Field(() => Float)
-  @Column()
-  total: number;
+  @Field(() => Float, { nullable: true })
+  @Column({ nullable: true })
+  total?: number;
 
   @IsEnum(OrderStatus)
   @Column({ type: 'enum', enum: OrderStatus, default: 'pending' })

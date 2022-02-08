@@ -6,7 +6,7 @@ import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 @InputType('DishChoiceInputType', { isAbstract: true })
 @ObjectType()
-class DishChoice {
+export class DishChoice {
   @Field(() => String)
   name: string;
 
@@ -23,8 +23,8 @@ export class DishOptions {
   @Field(() => [DishChoice], { nullable: true })
   choices?: DishChoice[];
 
-  @Field(() => Int)
-  extra: number;
+  @Field(() => Int, { nullable: true })
+  extra?: number;
 }
 
 @InputType('DishInputTypes', { isAbstract: true })

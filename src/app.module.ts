@@ -4,6 +4,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
+  NotFoundException,
   RequestMethod,
 } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -19,6 +20,8 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { EmailModule } from './email/email.module';
 import { RestModule } from './rest/rest.module';
 import { OrderModule } from './order/order.module';
+import { PayModule } from './pay/pay.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -54,8 +57,19 @@ import { OrderModule } from './order/order.module';
       synchronize: true,
     }),
     GraphQLModule.forRoot({
+      installSubscriptionHandlers: true,
       autoSchemaFile: true,
       debug: false,
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (params) => {
+            const token = params.authorization;
+            if (!token) throw new NotFoundException();
+
+            return { token };
+          },
+        },
+      },
       context: ({ req }) => ({ user: req['user'] }),
       formatError: (err) => {
         if (
@@ -70,6 +84,7 @@ import { OrderModule } from './order/order.module';
         }
       },
     }),
+    ScheduleModule.forRoot(),
     EmailModule.forRoot({
       EMAI_KEY: process.env.MAIL_KEY,
       MAIL_DOMAIN: process.env.MAIL_DOMAIN,
@@ -82,6 +97,7 @@ import { OrderModule } from './order/order.module';
     AuthModule,
     RestModule,
     OrderModule,
+    PayModule,
   ],
   controllers: [],
   providers: [],

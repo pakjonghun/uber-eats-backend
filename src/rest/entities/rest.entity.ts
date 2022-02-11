@@ -1,9 +1,10 @@
+import { Pay } from './../../pay/entities/pay.entity';
 import { OrderEntity } from './../../order/entities/order.entity';
 import { Dish } from './dish.entity';
 import { Cate } from './category.entity';
 import { Users } from './../../users/entities/users.entity';
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsBoolean } from 'class-validator';
 import { Core } from 'src/core/entities/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
@@ -44,11 +45,25 @@ export class Rest extends Core {
 
   @OneToMany(() => OrderEntity, (order) => order.rest, { nullable: true })
   @Field(() => [OrderEntity], { nullable: true })
-  order: OrderEntity[];
+  order?: OrderEntity[];
+
+  @OneToMany(() => Pay, (pay) => pay.rest, { nullable: true })
+  @Field(() => [Pay], { nullable: true })
+  pay?: Pay[];
 
   @RelationId((rest: Rest) => rest.cate)
   cateId?: number;
 
   @RelationId((rest: Rest) => rest.owner)
   ownerId?: number;
+
+  @IsBoolean()
+  @Column({ default: false })
+  @Field(() => Boolean, { defaultValue: false })
+  isPromited: boolean;
+
+  @IsDate()
+  @Field(() => Date, { nullable: true })
+  @Column({ nullable: true })
+  promoteUntil: Date;
 }

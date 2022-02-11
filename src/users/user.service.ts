@@ -1,4 +1,3 @@
-import { Users } from './entities/users.entity';
 import { EmailService } from './../email/email.service';
 import { VerifyRepo } from './repository/verify.repository';
 import { UpdateDto, OutUpdate } from './dtos/update.dto';

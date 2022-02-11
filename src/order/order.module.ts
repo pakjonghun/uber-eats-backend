@@ -1,3 +1,4 @@
+import { CoreModule } from './../core/core.module';
 import { DishRepo } from './../rest/repositories/dishRepo';
 import { ItemRepo } from './repositories/item.repo';
 import { RestModule } from './../rest/rest.module';
@@ -11,6 +12,7 @@ import { Module } from '@nestjs/common';
   imports: [
     TypeOrmModule.forFeature([OrderRepo, ItemRepo, DishRepo]),
     RestModule,
+    CoreModule,
   ],
   providers: [OrderResolver, OrderService],
 })

@@ -7,7 +7,6 @@ import {
   Float,
   InputType,
 } from '@nestjs/graphql';
-import { Dish } from './../../rest/entities/dish.entity';
 import { Rest } from './../../rest/entities/rest.entity';
 import { Core } from './../../core/entities/core.entity';
 import {
@@ -22,6 +21,7 @@ import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 export enum OrderStatus {
   'pending' = 'pending',
+  'cooked' = 'cooked',
   'cooking' = 'cooking',
   'delivery' = 'delivery',
   'complish' = 'complish',
@@ -36,9 +36,10 @@ export class OrderEntity extends Core {
   @ManyToOne(() => Users, (users) => users.customOrders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   @Field(() => Users, { nullable: true })
-  custom: Users;
+  client: Users;
 
   @ManyToOne(() => Users, (users) => users.deliveryOrders, {
     onDelete: 'SET NULL',
@@ -47,20 +48,23 @@ export class OrderEntity extends Core {
   @Field(() => Users, { nullable: true })
   driver?: Users;
 
-  @RelationId((order: OrderEntity) => order.custom)
+  @RelationId((order: OrderEntity) => order.client)
   customerId: number;
 
   @RelationId((order: OrderEntity) => order.driver)
   driverId: number;
 
-  @ManyToOne(() => Rest, (rest) => rest.order, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Rest, (rest) => rest.order, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   @Field(() => Rest)
   rest: Rest;
 
   @RelationId((order: OrderEntity) => order.rest)
   restId: number;
 
-  @ManyToMany(() => OrderItem, { onDelete: 'CASCADE' })
+  @ManyToMany(() => OrderItem, { onDelete: 'CASCADE', eager: true })
   @JoinTable({
     name: 'dish_order',
     joinColumn: { name: 'orderItem', referencedColumnName: 'id' },

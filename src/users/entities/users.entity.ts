@@ -1,3 +1,4 @@
+import { Pay } from './../../pay/entities/pay.entity';
 import { OrderEntity } from './../../order/entities/order.entity';
 import { Rest } from './../../rest/entities/rest.entity';
 import { Core } from '../../core/entities/core.entity';
@@ -62,9 +63,14 @@ export class Users extends Core {
   deliveryOrders?: OrderEntity[];
 
   @IsOptional()
-  @OneToMany(() => OrderEntity, (order) => order.custom, { nullable: true })
+  @OneToMany(() => OrderEntity, (order) => order.client, { nullable: true })
   @Field(() => [OrderEntity], { nullable: true })
   customOrders?: OrderEntity[];
+
+  @OneToMany(() => Pay, (pay) => pay.user, { nullable: true })
+  @Field(() => [Pay], { nullable: true })
+  @IsOptional()
+  pay: Pay[];
 
   @BeforeInsert()
   @BeforeUpdate()

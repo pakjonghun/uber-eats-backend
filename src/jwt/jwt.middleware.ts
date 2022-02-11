@@ -15,7 +15,10 @@ export class JwtMiddleware implements NestMiddleware {
       if ('authorization' in req.headers) {
         const payload = this.jwtService.verify(req.headers['authorization']);
         if (typeof payload === 'object' && 'id' in payload) {
-          const user = await this.userRepo.findOne({ id: payload['id'] });
+          const user = await this.userRepo.findOne(
+            { id: payload['id'] },
+            { relations: ['pay'] },
+          );
           if (!user) throw new NotFoundException();
           const { password, ...rest } = user;
           req['user'] = rest;

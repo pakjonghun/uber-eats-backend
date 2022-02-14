@@ -1,18 +1,19 @@
+import { OutCheckEmail, CheckEmailDto } from './dtos/checkEmail.dto';
 import { VerifyDto, OutVerify } from './dtos/verify.dto';
 import { EmailService } from './../email/email.service';
 import { OutUpdate, UpdateDto } from './dtos/update.dto';
 import { OutProfile, ProfileDto } from './dtos/profile.dto';
-import { AuthGuard } from './user.guard';
 import { Users } from './entities/users.entity';
 import { OutLogin, LoginDto } from './dtos/login.dto';
 import { OutRegister, RegisterDto } from './dtos/register.dto';
 import { OutFindAll } from './dtos/findAll.dto';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from './decorators/user.decorator';
+import { User, Cookie } from './decorators/user.decorator';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { SetRole } from 'src/auth/role.decorator';
+import { Request, Response } from 'express';
 
 @Resolver()
 export class UserResolver {
@@ -45,8 +46,13 @@ export class UserResolver {
   }
 
   @Mutation(() => OutLogin)
-  login(@Args() args: LoginDto): Promise<OutLogin> {
-    return this.userService.login(args);
+  async login(
+    @Context() ctx: { req: Request; res: Response },
+    @Args() args: LoginDto,
+  ): Promise<OutLogin> {
+    const result = await this.userService.login(args);
+    ctx.res.cookie('token', result.token);
+    return result;
   }
 
   @SetRole(['Any'])
@@ -68,5 +74,10 @@ export class UserResolver {
   @Mutation(() => OutVerify)
   verifyEmail(@Args() args: VerifyDto): Promise<OutVerify> {
     return this.userService.verify(args.code);
+  }
+
+  @Query(() => OutCheckEmail)
+  async checkEmail(@Args() args: CheckEmailDto): Promise<OutCheckEmail> {
+    return this.userService.checkEmail(args.email);
   }
 }

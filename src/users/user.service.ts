@@ -7,6 +7,7 @@ import { AuthService } from './../auth/auth.service';
 import { LoginDto, OutLogin } from './dtos/login.dto';
 import { OutRegister, RegisterDto } from './dtos/register.dto';
 import { FindAllDto } from './dtos/findAll.dto';
+
 import {
   ForbiddenException,
   Injectable,
@@ -14,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from 'src/jwt/jwt.service';
 import { OutVerify } from './dtos/verify.dto';
+import { OutCheckEmail } from './dtos/checkEmail.dto';
 
 @Injectable()
 export class UserService {
@@ -82,5 +84,10 @@ export class UserService {
     await this.userRepo.save(verify.user);
     await this.verifyRepo.delete(verify.id);
     return { isSuccess: true };
+  }
+
+  async checkEmail(email: string): Promise<OutCheckEmail> {
+    const isExist = await this.userRepo.count({ email });
+    return { isSuccess: !isExist };
   }
 }

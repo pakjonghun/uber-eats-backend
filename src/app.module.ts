@@ -57,6 +57,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       synchronize: true,
     }),
     GraphQLModule.forRoot({
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+      },
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
       debug: false,
@@ -70,7 +74,11 @@ import { ScheduleModule } from '@nestjs/schedule';
           },
         },
       },
-      context: ({ req }) => ({ user: req['user'] }),
+      context: ({ req, res }) => {
+        const token = req.cookies.token;
+        console.log('module', token);
+        return { user: req['user'], token, res };
+      },
       formatError: (err) => {
         if (
           err.message.startsWith('Database Error') ||

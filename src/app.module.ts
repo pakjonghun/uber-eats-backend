@@ -76,7 +76,6 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
       context: ({ req, res }) => {
         const token = req.cookies.token;
-        console.log('module', token);
         return { user: req['user'], token, res };
       },
       formatError: (err) => {

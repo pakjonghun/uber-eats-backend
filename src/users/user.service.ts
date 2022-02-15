@@ -32,8 +32,13 @@ export class UserService {
   async register(args: RegisterDto): Promise<OutRegister> {
     const user = await this.userRepo.save(this.userRepo.create(args));
     const test = await this.verifyRepo.createVerify(user.id);
+
     const mailValues = { subject: 'title', template: 'authen', to: user.email };
-    const tempValues = { user: user.id + '', href: 'https://naver.com', test };
+    const tempValues = {
+      user: user.id + '',
+      href: `http://localhost:3000/confirm?code=${test}`,
+      test,
+    };
     await this.emailService.send(mailValues, tempValues);
     return { isSuccess: true, user };
   }
@@ -65,12 +70,20 @@ export class UserService {
       }
     }
 
-    const userObj = this.userRepo.create({ id, ...args });
+    const userObj = this.userRepo.create({
+      id,
+      ...args,
+      isEmailVerified: false,
+    });
     if (args.email) {
       await this.verifyRepo.delete({ user: { id } });
       const test = await this.verifyRepo.createVerify(userObj.id);
       const mailValues = { subject: 't', template: 'authen', to: args.email };
-      const tempValues = { user: id + '', href: 'https://naver.com', test };
+      const tempValues = {
+        user: id + '',
+        href: `http://localhost:3000/confirm?code=${test}`,
+        test,
+      };
       await this.emailService.send(mailValues, tempValues);
     }
     const { role, email } = await this.userRepo.save(userObj);

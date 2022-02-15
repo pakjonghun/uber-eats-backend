@@ -10,12 +10,12 @@ import { OutFindAll } from './dtos/findAll.dto';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User, Cookie } from './decorators/user.decorator';
+import { User } from './decorators/user.decorator';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { SetRole } from 'src/auth/role.decorator';
 import { Request, Response } from 'express';
 
-@Resolver()
+@Resolver(() => Users)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
@@ -79,5 +79,12 @@ export class UserResolver {
   @Query(() => OutCheckEmail)
   async checkEmail(@Args() args: CheckEmailDto): Promise<OutCheckEmail> {
     return this.userService.checkEmail(args.email);
+  }
+
+  @Mutation(() => Users, { nullable: true })
+  async logout(@Context() ctx: { req: Request; res: Response }) {
+    ctx.res.cookie('token', '', { maxAge: 0 });
+    console.log('logout');
+    return null;
   }
 }

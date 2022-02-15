@@ -7,6 +7,7 @@ import {
   PartialType,
   ArgsType,
 } from '@nestjs/graphql';
+import { IsOptional, IsString } from 'class-validator';
 
 @ObjectType()
 class UpdatedUser extends PickType(Users, ['role', 'email']) {}
@@ -19,6 +20,11 @@ export class OutUpdate extends OutMutation {
 
 @ArgsType()
 export class UpdateDto extends PartialType(
-  PickType(Users, ['email', 'password', 'role']),
+  PickType(Users, ['email', 'role']),
   ArgsType,
-) {}
+) {
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  password?: string;
+}

@@ -99,7 +99,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     JwtModule.forRoot({ privateKey: process.env.TOKEN_SECRET }),
     TypeOrmModule.forFeature([UserRepo]),
-    CoreModule.forRoot({ take: 2 }),
+    CoreModule.forRoot({ take: 3 }),
     UsersModule,
     AuthModule,
     RestModule,

@@ -124,10 +124,12 @@ export class RestService {
   }
 
   async SearchRest(args: RestSearchDto): Promise<OutRestSestch> {
-    return this.coreService.getData(args.page, 'restRepo', {
+    const r = await this.coreService.getData(args.page, 'restRepo', {
       restRepo: 'findByNamePage',
       options: { name: args.term },
     });
+    console.log(r);
+    return r;
   }
 
   async findRestById(id: number): Promise<Rest> {

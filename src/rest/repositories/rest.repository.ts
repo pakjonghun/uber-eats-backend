@@ -4,7 +4,12 @@ import { EntityRepository, Repository, ILike } from 'typeorm';
 
 @EntityRepository(Rest)
 export class RestRepo extends Repository<Rest> {
-  async findByNamePage(take: number, skip: number, { name }: SearchOptions) {
+  async findByNamePage(
+    take: number,
+    skip: number,
+    { options: { name } }: { options: SearchOptions },
+  ) {
+    console.log(name);
     return this.findAndCount({
       where: { name: ILike(`%${name}%`) },
       take,

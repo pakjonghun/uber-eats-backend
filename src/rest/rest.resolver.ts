@@ -1,3 +1,4 @@
+import { OutMyRest } from './dtos/myRest.dto';
 import { OutDeleteDish } from './dtos/deleteDishDto';
 import { OutEditDish, EditDishDto } from './dtos/editDish.dto';
 import { Dish } from './entities/dish.entity';
@@ -29,6 +30,12 @@ import { FindOneCateDto, OutFindOneCate } from './dtos/cateFindOne.dto';
 @Resolver(() => Rest)
 export class RestResolver {
   constructor(private readonly restService: RestService) {}
+
+  @SetRole(['Owner'])
+  @Query(() => OutMyRest)
+  myRest(@User() me: Users): Promise<OutMyRest> {
+    return this.restService.myRest(me.id);
+  }
 
   @SetRole(['Owner'])
   @Mutation(() => OutRegisterRest)

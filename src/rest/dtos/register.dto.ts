@@ -10,13 +10,10 @@ import {
 import { IsOptional, IsString } from 'class-validator';
 
 @ObjectType()
-class RegisterRestOut extends Rest {}
-
-@ObjectType()
 export class OutRegisterRest extends OutMutation {
   @IsOptional()
-  @Field(() => RegisterRestOut, { nullable: true })
-  rest?: RegisterRestOut;
+  @Field(() => Rest, { nullable: true })
+  rest?: Rest;
 }
 
 @InputType()

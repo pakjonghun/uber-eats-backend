@@ -22,6 +22,7 @@ import { RestModule } from './rest/rest.module';
 import { OrderModule } from './order/order.module';
 import { PayModule } from './pay/pay.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -105,6 +106,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     RestModule,
     OrderModule,
     PayModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],

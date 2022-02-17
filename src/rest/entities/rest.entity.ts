@@ -34,6 +34,7 @@ export class Rest extends Core {
 
   @Field(() => Cate, { nullable: true })
   @ManyToOne(() => Cate, (cate) => cate.rest, {
+    eager: true,
     onDelete: 'SET NULL',
     nullable: true,
   })

@@ -1,3 +1,4 @@
+import { OutMyRest } from './dtos/myRest.dto';
 import { EditDishDto, OutEditDish } from './dtos/editDish.dto';
 import { DishRepo } from './repositories/dishRepo';
 import { CreateDishDto, OutCreateDish } from './dtos/createDish.dto';
@@ -108,6 +109,7 @@ export class RestService {
       take,
       skip,
     });
+    date.rest = rest;
     const totalPages = Math.ceil(totalResults / take);
     return { date, totalPages, totalResults, rest };
   }
@@ -147,6 +149,14 @@ export class RestService {
       this.dishRepo.create({ ...args, rest }),
     );
     return { isSuccess: true, data };
+  }
+
+  async myRest(id: number): Promise<OutMyRest> {
+    const rest = await this.restRepo.find({
+      where: { owner: { id } },
+      relations: ['dish'],
+    });
+    return { rest };
   }
 
   async editDish(userId: number, args: EditDishDto): Promise<OutEditDish> {
